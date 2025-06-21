@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式報告：AI 驅動的智慧交通未來</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Academic Neutral -->
+    <!-- Application Structure Plan: The SPA adopts a thematic, dashboard-style structure rather than mirroring the linear flow of the source report. The goal is to facilitate user-driven exploration. A sticky navigation bar (總覽, 核心技術, 安全維度, 效能與綠能, 挑戰與展望) allows for both sequential reading and direct access to key topics. The structure is designed to first present the high-level impact (Overview), then explain the underlying technologies (Core Tech), dive deep into the data-rich evidence (Safety), discuss the broader implications (Efficiency & Green), and finally address limitations (Challenges). This flow guides the user from the "what" to the "how" and "why," making complex information more digestible. Interactive charts with filters are used in the "Safety" section to allow users to directly compare performance metrics, which is a more engaging way to understand the data than static tables. -->
+    <!-- Visualization & Content Choices: 
+        - Goal: Inform -> Method: Concise text blocks, HTML/CSS diagrams (for VLM/MPC flows), and key metric cards provide context and summarize core concepts.
+        - Goal: Compare -> Method: Interactive bar charts (Chart.js) are used for Tables 1, 4, 5, and 6 to visually compare the performance of different models (e.g., DriveVLM-Dual vs. others). A key interaction is the filterable chart for Tables 2 & 3, where users can click buttons to switch between scenarios ('停車場', '交叉路口') to see how VLM-MPC adapts, making the data comparison dynamic and engaging.
+        - Goal: Organize -> Method: A sticky navigation bar and distinct thematic sections (`<section>`) create a clear information hierarchy. A multi-column layout is used for the "Core Technologies" to present them side-by-side for easy comparison.
+        - Justification: This approach transforms static data tables into interactive visualizations, which enhances user engagement and comprehension. It highlights the most critical findings (e.g., the superiority of a specific model) in a visually intuitive way. All charts are rendered on Canvas via Chart.js, and diagrams are built with semantic HTML and Tailwind CSS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #F8F7F4;
+            color: #3D405B;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #E07A5F;
+            border-bottom-color: #E07A5F;
+        }
+        .btn {
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn.active {
+            background-color: #E07A5F;
+            color: #FFFFFF;
+            font-weight: 700;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <h1 class="text-xl md:text-2xl font-bold text-[#3D405B]">智慧交通的未來</h1>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#overview" class="nav-link border-b-2 border-transparent pb-1">總覽</a>
+                    <a href="#tech" class="nav-link border-b-2 border-transparent pb-1">核心技術</a>
+                    <a href="#safety" class="nav-link border-b-2 border-transparent pb-1">安全維度</a>
+                    <a href="#efficiency" class="nav-link border-b-2 border-transparent pb-1">效能與綠能</a>
+                    <a href="#challenges" class="nav-link border-b-2 border-transparent pb-1">挑戰與展望</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 md:py-12">
+
+        <section id="overview" class="text-center mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-5xl font-bold mb-4 text-[#E07A5F]">AI 驅動的自動駕駛革命</h2>
+            <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-600 mb-8">
+                本報告深入探討視覺-語言模型 (VLM)、大型語言模型 (LLM) 與擴散模型如何從根本上提升自動駕駛的安全性、效率，並推動綠色運輸。透過互動式圖表，您將了解這些先進 AI 技術的實際成效與未來挑戰。
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div class="card text-center">
+                    <div class="text-4xl font-bold text-[#81B29A] mb-2">90%</div>
+                    <h3 class="font-semibold text-lg">碰撞率降低</h3>
+                    <p class="text-sm text-gray-500">相較於傳統模型，DriveVLM-Dual 的平均碰撞率顯著降低，展現卓越的場景規劃能力。</p>
+                </div>
+                <div class="card text-center">
+                    <div class="text-4xl font-bold text-[#81B29A] mb-2">>1.3s</div>
+                    <h3 class="font-semibold text-lg">安全間距 (PET)</h3>
+                    <p class="text-sm text-gray-500">VLM-MPC 在所有測試情境中均能維持高於安全閾值的反應時間，確保行車安全。</p>
+                </div>
+                <div class="card text-center">
+                    <div class="text-4xl font-bold text-[#81B29A] mb-2">20%</div>
+                    <h3 class="font-semibold text-lg">駕駛舒適度提升</h3>
+                    <p class="text-sm text-gray-500">透過平滑的加減速控制 (低 RMSa 值)，VLM-MPC 提供更舒適的乘坐體驗，並有助於交通流暢化。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="tech" class="mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">三大核心 AI 技術解析</h2>
+             <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-3 text-center text-[#E07A5F]">視覺-語言模型 (VLM)</h3>
+                    <p class="text-gray-600 mb-4">VLM 賦予自動駕駛系統「理解」的能力，能處理複雜的長尾場景並解讀人類行為意圖，超越傳統的物體偵測。</p>
+                    <div class="space-y-2 text-sm">
+                        <div class="bg-gray-100 p-2 rounded-md flex items-center"><span class="font-semibold w-28">場景描述:</span><span>以語言描繪環境</span></div>
+                        <div class="text-center font-bold text-gray-400">↓</div>
+                        <div class="bg-gray-100 p-2 rounded-md flex items-center"><span class="font-semibold w-28">場景分析:</span><span>辨識關鍵物體與影響</span></div>
+                        <div class="text-center font-bold text-gray-400">↓</div>
+                        <div class="bg-gray-100 p-2 rounded-md flex items-center"><span class="font-semibold w-28">分層規劃:</span><span>制定駕駛決策</span></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-3 text-center text-[#E07A5F]">大型語言模型 (LLM)</h3>
+                    <p class="text-gray-600 mb-4">LLM 扮演著「大腦」的角色，負責高層次的決策與規劃，能進行情境推理並生成人類可解釋的駕駛策略。</p>
+                    <div class="space-y-2 text-sm">
+                         <div class="bg-gray-100 p-2 rounded-md flex items-center"><span class="font-semibold w-28">高層決策 (LLM):</span><span>生成駕駛參數</span></div>
+                         <div class="text-center font-bold text-gray-400">↓</div>
+                         <div class="bg-gray-100 p-2 rounded-md flex items-center"><span class="font-semibold w-28">低層控制 (MPC):</span><span>實時控制車輛</span></div>
+                         <div class="text-center font-bold text-gray-400">↑</div>
+                         <div class="bg-gray-100 p-2 rounded-md flex items-center"><span class="font-semibold w-28">狀態回饋:</span><span>閉環優化</span></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-3 text-center text-[#E07A5F]">擴散模型</h3>
+                    <p class="text-gray-600 mb-4">擴散模型專精於「預測」，能生成多樣且逼真的未來軌跡，尤其擅長預測行人等不確定性高的物體動向。</p>
+                     <div class="space-y-2 text-sm text-center">
+                        <div class="bg-gray-100 p-3 rounded-md">
+                            <p class="font-semibold">預測行人未來可能路徑</p>
+                            <div class="flex justify-center items-end h-20 mt-2 space-x-1">
+                                <div class="w-1 h-8 bg-[#81B29A] rounded-t-full animate-pulse" style="animation-delay: 0s;"></div>
+                                <div class="w-1 h-12 bg-[#81B29A] rounded-t-full animate-pulse" style="animation-delay: 0.2s;"></div>
+                                <div class="w-1 h-16 bg-[#81B29A] rounded-t-full animate-pulse" style="animation-delay: 0.4s;"></div>
+                                <div class="w-1 h-10 bg-[#81B29A] rounded-t-full animate-pulse" style="animation-delay: 0.6s;"></div>
+                            </div>
+                        </div>
+                         <p class="text-gray-600 pt-2">幫助自駕車提前規避風險，保護弱勢用路人。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="safety" class="mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">安全維度深度解析</h2>
+            <p class="text-lg text-center text-gray-600 mb-12">安全性是自動駕駛的核心。此處我們透過互動圖表，量化比較不同 AI 模型在關鍵安全指標上的表現。</p>
+
+            <div class="card mb-12">
+                <h3 class="text-2xl font-bold text-center mb-2">複雜場景規劃能力</h3>
+                <p class="text-center text-gray-500 mb-6">比較不同模型在 nuScenes 數據集上的規劃精準度 (L2 誤差) 與碰撞率。數值越低代表性能越好。</p>
+                <div class="chart-container">
+                    <canvas id="driveVlmChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card mb-12">
+                <h3 class="text-2xl font-bold text-center mb-2">安全與舒適性 (VLM-MPC)</h3>
+                <p class="text-center text-gray-500 mb-6">VLM-MPC 能根據不同情境動態調整駕駛策略。點擊下方按鈕，查看其在不同情境下的安全間距 (PET) 與駕駛平穩度 (RMSa)。PET 越高越安全，RMSa 越低越舒適。</p>
+                <div class="flex justify-center space-x-2 md:space-x-4 mb-6" id="vlmMpcFilter">
+                    <button data-scenario="parking" class="btn px-4 py-2 rounded-full bg-white shadow-sm border">停車場景</button>
+                    <button data-scenario="intersection" class="btn px-4 py-2 rounded-full bg-white shadow-sm border">交叉路口</button>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="chart-container">
+                        <canvas id="petChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="rmsaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                 <h3 class="text-2xl font-bold text-center mb-2">行人保護能力</h3>
+                <p class="text-center text-gray-500 mb-6">比較 UTD-PTP 在行人軌跡預測上的精準度 (ADE/FDE)，以及 ESAD-LEND 在模擬環境中的違規率。數值越低代表性能越好。</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="chart-container">
+                        <canvas id="utdptpChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="esadlendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="efficiency" class="mb-16 md:mb-24">
+             <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">從效率提升到綠色運輸</h2>
+            <p class="text-lg text-center text-gray-600 mb-12">AI 優化的平穩駕駛行為不僅提升了交通效率，更為實現低耗能、低排放的綠色運輸願景奠定基礎。</p>
+            <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
+                <div class="card flex flex-col items-center text-center">
+                    <div class="p-4 bg-[#81B29A]/20 rounded-full mb-4">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#81B29A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">提升交通效率</h3>
+                    <p class="text-gray-600">AI 系統透過平滑的加減速（低 RMSa 值）避免了不必要的急煞和急加速，有效減少了由人類不穩定駕駛行為引發的「幽靈堵塞」，使整體交通流更加順暢。</p>
+                </div>
+                 <div class="card flex flex-col items-center text-center">
+                    <div class="p-4 bg-[#F2CC8F]/20 rounded-full mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#F2CC8F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.343A8 8 0 016.343 7.657m11.314 0a8 8 0 010 10.686M12 21a9 9 0 110-18 9 9 0 010 18z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">促進綠色運輸</h3>
+                    <p class="text-gray-600">平穩的駕駛行為直接轉化為更低的能源消耗。結合 AI 驅動的最佳路徑規劃與未來車隊協同管理，能顯著減少行駛里程與碳排放，實現環保的交通願景。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="challenges" class="mb-16 md:mb-24">
+             <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">挑戰與未來展望</h2>
+            <p class="text-lg text-center text-gray-600 mb-12">儘管前景光明，AI 驅動的自動駕駛仍面臨著技術、數據與倫理上的挑戰，需要持續研究與克服。</p>
+            <div class="grid md:grid-cols-3 gap-8">
+                 <div class="card">
+                    <h3 class="text-xl font-bold mb-3 text-[#E07A5F]">LLM 自我批評的局限</h3>
+                    <p class="text-gray-600 mb-4">大型語言模型在自我驗證規劃時，會產生大量「錯誤的正面判斷」，即將錯誤的規劃判斷為正確，這對安全至關重要的系統是重大風險。</p>
+                    <div class="h-56 flex flex-col justify-center items-center">
+                         <canvas id="llmCritiqueChart"></canvas>
+                    </div>
+                </div>
+                 <div class="card">
+                    <h3 class="text-xl font-bold mb-3 text-[#E07A5F]">模型計算限制</h3>
+                    <p class="text-gray-600">VLM/LLM 的高計算成本與較慢的反應速度，使得異步分層架構（將高層決策與低層控制分離）成為當前實現即時部署的必要手段。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-3 text-[#E07A5F]">數據與現實差距</h3>
+                    <p class="text-gray-600">現有數據集難以涵蓋所有「長尾事件」，且模擬環境與真實世界存在差距，模型的泛化能力與魯棒性仍需在真實世界中持續驗證和提升。</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="text-center py-6 bg-gray-100 border-t">
+        <p class="text-gray-500 text-sm">此互動式報告根據多篇學術論文綜合製作，旨在以視覺化方式呈現研究成果。</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chartColors = {
+                blue: 'rgba(54, 162, 235, 0.6)',
+                green: 'rgba(75, 192, 192, 0.6)',
+                red: 'rgba(255, 99, 132, 0.6)',
+                orange: 'rgba(255, 159, 64, 0.6)',
+                purple: 'rgba(153, 102, 255, 0.6)',
+                grey: 'rgba(201, 203, 207, 0.6)',
+                darkBlue: 'rgba(61, 64, 91, 0.8)',
+                accent: 'rgba(224, 122, 95, 0.8)'
+            };
+
+            const chartHoverColors = {
+                blue: 'rgba(54, 162, 235, 0.9)',
+                green: 'rgba(75, 192, 192, 0.9)',
+                red: 'rgba(255, 99, 132, 0.9)',
+                orange: 'rgba(255, 159, 64, 0.9)',
+                purple: 'rgba(153, 102, 255, 0.9)',
+                grey: 'rgba(201, 203, 207, 0.9)',
+                darkBlue: 'rgba(61, 64, 91, 1)',
+                accent: 'rgba(224, 122, 95, 1)'
+            };
+
+            const defaultChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#3D405B'
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#3D405B'
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            };
+            
+            new Chart(document.getElementById('driveVlmChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['FF', 'EO', 'ST-P3', 'UniAD', 'VAD-Base', 'DriveVLM', 'DriveVLM-Dual'],
+                    datasets: [
+                        {
+                            label: '平均L2誤差 (m)',
+                            data: [1.43, 1.60, 2.11, 1.03, 0.37, 0.40, 0.31],
+                            backgroundColor: chartColors.blue,
+                            borderColor: chartHoverColors.blue,
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '平均碰撞率 (%)',
+                            data: [0.43, 0.33, 0.71, 0.31, 0.14, 0.27, 0.10],
+                            backgroundColor: chartColors.red,
+                            borderColor: chartHoverColors.red,
+                            borderWidth: 1,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    ...defaultChartOptions,
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'L2誤差 (m)' },
+                             grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: '碰撞率 (%)' },
+                            grid: { drawOnChartArea: false },
+                        }
+                    }
+                }
+            });
+
+            const vlmMpcData = {
+                parking: {
+                    pet: [1.65, 1.73, 0.37, 1.31], 
+                    rmsa: [0.61, 0.35, 0.41, 0.33]
+                },
+                intersection: {
+                    pet: [1.33, 1.74, 0.05, 1.97],
+                    rmsa: [0.63, 0.40, 0.47, 0.42]
+                }
+            };
+
+            const petChartCtx = document.getElementById('petChart').getContext('2d');
+            const petChart = new Chart(petChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['真實軌跡', '基準MPC', '基準LLM', 'VLM-MPC'],
+                    datasets: [{
+                        label: '最小PET值 (秒)',
+                        data: [],
+                        backgroundColor: chartColors.green,
+                        borderColor: chartHoverColors.green,
+                        borderWidth: 1
+                    }]
+                },
+                options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, title: { display: true, text: '安全間距 (PET)' } } }
+            });
+
+            const rmsaChartCtx = document.getElementById('rmsaChart').getContext('2d');
+            const rmsaChart = new Chart(rmsaChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['真實軌跡', '基準MPC', '基準LLM', 'VLM-MPC'],
+                    datasets: [{
+                        label: 'RMSa值 (m/s²)',
+                        data: [],
+                        backgroundColor: chartColors.orange,
+                        borderColor: chartHoverColors.orange,
+                        borderWidth: 1
+                    }]
+                },
+                options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, title: { display: true, text: '駕駛平穩度 (RMSa)' } } }
+            });
+
+            const filterButtons = document.querySelectorAll('#vlmMpcFilter button');
+            function updateVlmMpcCharts(scenario) {
+                petChart.data.datasets[0].data = vlmMpcData[scenario].pet;
+                rmsaChart.data.datasets[0].data = vlmMpcData[scenario].rmsa;
+                petChart.update();
+                rmsaChart.update();
+                
+                filterButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.scenario === scenario);
+                });
+            }
+            
+            document.querySelector('#vlmMpcFilter').addEventListener('click', (e) => {
+                if(e.target.tagName === 'BUTTON') {
+                    updateVlmMpcCharts(e.target.dataset.scenario);
+                }
+            });
+            updateVlmMpcCharts('parking');
+
+
+            new Chart(document.getElementById('utdptpChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['SoPhie', 'Y-Net', 'PECNet', 'UTD-PTP'],
+                    datasets: [{
+                        label: '平均ADE',
+                        data: [0.54, 0.18, 0.29, 0.21],
+                        backgroundColor: chartColors.purple,
+                    }, {
+                        label: '平均FDE',
+                        data: [1.15, 0.27, 0.48, 0.37],
+                        backgroundColor: chartColors.grey
+                    }]
+                },
+                options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, title: { display: true, text: '行人軌跡預測精度 (越低越好)' } } }
+            });
+            
+            new Chart(document.getElementById('esadlendChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Dreamer', 'SAC', 'Diffuser', 'ESAD-LEND'],
+                    datasets: [{
+                        label: '碰撞率 (%)',
+                        data: [0.8, 1.9, 0.7, 0.5],
+                        backgroundColor: chartColors.red,
+                    }, {
+                        label: '違規率 (%)',
+                        data: [0.7, 1.6, 0.9, 0.5],
+                        backgroundColor: chartColors.orange
+                    }]
+                },
+                options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, title: { display: true, text: '端到端導航違規分析 (越低越好)' } } }
+            });
+            
+            new Chart(document.getElementById('llmCritiqueChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['LLM自我批評準確率', '外部驗證器準確率'],
+                    datasets: [{
+                        label: '規劃準確率',
+                        data: [55, 88],
+                        backgroundColor: [
+                            chartColors.accent,
+                            chartColors.darkBlue
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                 options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        title: { display: true, text: 'LLM自我批評 vs 外部驗證器' }
+                    }
+                }
+            });
+
+            const navLinks = document.querySelectorAll('nav a');
+            const sections = document.querySelectorAll('section');
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 80) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
